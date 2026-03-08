@@ -1,0 +1,19 @@
+# Mac
+.DS_Store
+**/.DS_Store
+
+# Next.js
+client-side/.next/
+client-side/node_modules/
+client-side/.env
+client-side/.env.local
+
+# Spring Boot
+server-side/target/
+server-side/.mvn/
+server-side/*.jar
+
+# IDE
+.idea/
+*.iml
+**/.idea/

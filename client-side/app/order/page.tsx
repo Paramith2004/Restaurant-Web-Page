@@ -1,7 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { placeOrder, makeReservation, getMenuItems } from '@/lib/api';
 
 interface MenuItem {
     id: number;
@@ -30,6 +29,7 @@ export default function OrderPage() {
         time: '', guests: '2', notes: ''
     });
     const [success, setSuccess] = useState('');
+    const [orderId, setOrderId] = useState<number | null>(null);
     const [loading, setLoading] = useState(false);
 
     const categories = [
@@ -42,7 +42,9 @@ export default function OrderPage() {
     ];
 
     useEffect(() => {
-        getMenuItems().then(res => setMenuItems(res.data));
+        fetch('http://localhost:8081/api/menu')
+            .then(res => res.json())
+            .then(data => setMenuItems(data));
     }, []);
 
     const filteredItems = activeCategory === 'all'
@@ -78,9 +80,18 @@ export default function OrderPage() {
         }
         setLoading(true);
         try {
-            await placeOrder({ ...orderForm, items: cartSummary });
-            const msg = `🍽️ *New Order - Dinu's Tasty*\n\n👤 Name: ${orderForm.customerName}\n📞 Phone: ${orderForm.phone}\n🛵 Type: ${orderForm.orderType}\n📍 Address: ${orderForm.address}\n\n🍛 Order:\n${cartSummary}\n\n💰 Total: Rs. ${totalPrice}\n\n📝 Notes: ${orderForm.notes || 'None'}`;
+            const res = await fetch('http://localhost:8081/api/orders', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ...orderForm, items: cartSummary })
+            });
+            const data = await res.json();
+            const newOrderId = data.id;
+
+            const msg = `🍽️ *New Order - Dinu's Tasty*\n\n🔢 Order ID: #${newOrderId}\n👤 Name: ${orderForm.customerName}\n📞 Phone: ${orderForm.phone}\n🛵 Type: ${orderForm.orderType}\n📍 Address: ${orderForm.address}\n\n🍛 Order:\n${cartSummary}\n\n💰 Total: Rs. ${totalPrice}\n\n📝 Notes: ${orderForm.notes || 'None'}`;
             window.open(`https://wa.me/94771234567?text=${encodeURIComponent(msg)}`, '_blank');
+
+            setOrderId(newOrderId);
             setSuccess('order');
             setCart([]);
             setOrderForm({ customerName: '', phone: '', orderType: 'Delivery', address: '', notes: '' });
@@ -96,7 +107,11 @@ export default function OrderPage() {
         }
         setLoading(true);
         try {
-            await makeReservation(resForm);
+            await fetch('http://localhost:8081/api/reservations', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(resForm)
+            });
             const msg = `🗓️ *Table Reservation - Dinu's Tasty*\n\n👤 Name: ${resForm.name}\n📞 Phone: ${resForm.phone}\n📅 Date: ${resForm.date}\n⏰ Time: ${resForm.time}\n👥 Guests: ${resForm.guests}\n📝 Notes: ${resForm.notes || 'None'}`;
             window.open(`https://wa.me/94771234567?text=${encodeURIComponent(msg)}`, '_blank');
             setSuccess('reservation');
@@ -142,7 +157,9 @@ export default function OrderPage() {
                         </Link>
                     ))}
                 </div>
-                <Link href="/order" style={{ background: '#C9A84C', color: '#0D0D0D', padding: '10px 24px', borderRadius: 4, fontWeight: 700, textDecoration: 'none', fontSize: 14 }}>Order Now</Link>
+                <Link href="/order" style={{ background: '#C9A84C', color: '#0D0D0D', padding: '10px 24px', borderRadius: 4, fontWeight: 700, textDecoration: 'none', fontSize: 14 }}>
+                    Order Now
+                </Link>
             </nav>
 
             <section style={{ padding: '60px 60px 80px' }}>
@@ -156,9 +173,9 @@ export default function OrderPage() {
                 </div>
 
                 {/* TABS */}
-                <div style={{ display: 'flex', gap: 0, marginBottom: 40, background: '#1A1A1A', borderRadius: 10, padding: 4, maxWidth: 500, margin: '0 auto 40px' }}>
+                <div style={{ display: 'flex', gap: 0, background: '#1A1A1A', borderRadius: 10, padding: 4, maxWidth: 500, margin: '0 auto 40px' }}>
                     {(['order', 'reservation'] as const).map(t => (
-                        <button key={t} onClick={() => { setTab(t); setSuccess(''); }} style={{
+                        <button key={t} onClick={() => { setTab(t); setSuccess(''); setOrderId(null); }} style={{
                             flex: 1, padding: '14px', borderRadius: 8,
                             border: 'none', cursor: 'pointer',
                             background: tab === t ? '#C9A84C' : 'transparent',
@@ -171,25 +188,79 @@ export default function OrderPage() {
                     ))}
                 </div>
 
-                {/* SUCCESS */}
-                {success && (
+                {/* ORDER SUCCESS */}
+                {success === 'order' && orderId && (
                     <div style={{
-                        background: 'rgba(201,168,76,0.1)', border: '1px solid rgba(201,168,76,0.3)',
-                        borderRadius: 10, padding: '20px 24px', marginBottom: 32,
-                        textAlign: 'center', maxWidth: 600, margin: '0 auto 32px'
+                        background: '#1A1A1A', border: '2px solid #C9A84C',
+                        borderRadius: 16, padding: 48, textAlign: 'center',
+                        maxWidth: 600, margin: '0 auto 40px'
                     }}>
-                        <div style={{ fontSize: 36, marginBottom: 8 }}>✅</div>
-                        <div style={{ color: '#C9A84C', fontWeight: 700, fontSize: 18, marginBottom: 4 }}>
-                            {success === 'order' ? 'Order Placed Successfully!' : 'Reservation Made!'}
+                        <div style={{ fontSize: 72, marginBottom: 16 }}>🎉</div>
+                        <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: 36, fontWeight: 900, color: '#C9A84C', marginBottom: 8 }}>
+                            Order Placed!
+                        </h2>
+                        <p style={{ color: '#9A9080', fontSize: 15, marginBottom: 24 }}>
+                            Your order has been received successfully!
+                        </p>
+                        <div style={{ background: '#252525', borderRadius: 12, padding: '20px 32px', marginBottom: 24, display: 'inline-block' }}>
+                            <div style={{ color: '#9A9080', fontSize: 13, marginBottom: 4, letterSpacing: 1 }}>ORDER NUMBER</div>
+                            <div style={{ color: '#C9A84C', fontSize: 48, fontWeight: 900, fontFamily: 'Playfair Display, serif' }}>
+                                #{orderId}
+                            </div>
                         </div>
-                        <div style={{ color: '#9A9080', fontSize: 14 }}>
-                            WhatsApp message sent! We&apos;ll confirm shortly 😊
+                        <p style={{ color: '#9A9080', fontSize: 14, lineHeight: 1.8, marginBottom: 28 }}>
+                            A WhatsApp message has been sent to the restaurant. 📱<br />
+                            We will confirm your order shortly!
+                        </p>
+                        <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 28 }}>
+                            <div style={{ background: 'rgba(201,168,76,0.1)', border: '1px solid rgba(201,168,76,0.3)', borderRadius: 8, padding: '12px 20px', color: '#C9A84C', fontSize: 14 }}>
+                                📞 0771 234 567
+                            </div>
+                            <div style={{ background: 'rgba(201,168,76,0.1)', border: '1px solid rgba(201,168,76,0.3)', borderRadius: 8, padding: '12px 20px', color: '#C9A84C', fontSize: 14 }}>
+                                ⏰ Ready in 30-45 mins
+                            </div>
                         </div>
+                        <button onClick={() => { setSuccess(''); setOrderId(null); }} style={{
+                            background: 'transparent', border: '1px solid rgba(201,168,76,0.4)',
+                            color: '#C9A84C', padding: '12px 28px', borderRadius: 8,
+                            fontSize: 14, cursor: 'pointer', fontFamily: 'DM Sans, sans-serif'
+                        }}>
+                            ← Place Another Order
+                        </button>
                     </div>
                 )}
 
-                {/* ORDER TAB */}
-                {tab === 'order' && (
+                {/* RESERVATION SUCCESS */}
+                {success === 'reservation' && (
+                    <div style={{
+                        background: '#1A1A1A', border: '2px solid #3B82F6',
+                        borderRadius: 16, padding: 48, textAlign: 'center',
+                        maxWidth: 600, margin: '0 auto 40px'
+                    }}>
+                        <div style={{ fontSize: 72, marginBottom: 16 }}>🗓️</div>
+                        <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: 36, fontWeight: 900, color: '#3B82F6', marginBottom: 8 }}>
+                            Table Reserved!
+                        </h2>
+                        <p style={{ color: '#9A9080', fontSize: 15, lineHeight: 1.8, marginBottom: 28 }}>
+                            Your reservation has been received! A WhatsApp message has been sent to the restaurant. 📱<br />
+                            We will confirm your booking shortly!
+                        </p>
+                        <div style={{ background: 'rgba(59,130,246,0.1)', border: '1px solid rgba(59,130,246,0.3)', borderRadius: 8, padding: '12px 20px', color: '#3B82F6', fontSize: 14, display: 'inline-block', marginBottom: 28 }}>
+                            📞 For queries: 0771 234 567
+                        </div>
+                        <br />
+                        <button onClick={() => setSuccess('')} style={{
+                            background: 'transparent', border: '1px solid rgba(59,130,246,0.4)',
+                            color: '#3B82F6', padding: '12px 28px', borderRadius: 8,
+                            fontSize: 14, cursor: 'pointer', fontFamily: 'DM Sans, sans-serif'
+                        }}>
+                            ← Make Another Reservation
+                        </button>
+                    </div>
+                )}
+
+                {/* ORDER FORM */}
+                {tab === 'order' && !success && (
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: 32, maxWidth: 1100, margin: '0 auto' }}>
 
                         {/* LEFT - Menu Selection */}
@@ -214,7 +285,7 @@ export default function OrderPage() {
                             </div>
                             {filteredItems.length === 0 ? (
                                 <div style={{ textAlign: 'center', color: '#9A9080', padding: 40 }}>
-                                    No items yet — add from Admin panel!
+                                    No items yet — check back soon!
                                 </div>
                             ) : (
                                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
@@ -351,8 +422,8 @@ export default function OrderPage() {
                     </div>
                 )}
 
-                {/* RESERVATION TAB */}
-                {tab === 'reservation' && (
+                {/* RESERVATION FORM */}
+                {tab === 'reservation' && !success && (
                     <div style={{ maxWidth: 600, margin: '0 auto' }}>
                         <div style={{ background: '#1A1A1A', border: '1px solid rgba(201,168,76,0.15)', borderRadius: 16, padding: 40 }}>
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 20 }}>

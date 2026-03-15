@@ -44,7 +44,8 @@ export default function OrderPage() {
     useEffect(() => {
         fetch('http://localhost:8081/api/menu')
             .then(res => res.json())
-            .then(data => setMenuItems(data));
+            .then(data => setMenuItems(data))
+            .catch(() => console.error('Failed to load menu'));
     }, []);
 
     const filteredItems = activeCategory === 'all'
@@ -87,10 +88,8 @@ export default function OrderPage() {
             });
             const data = await res.json();
             const newOrderId = data.id;
-
             const msg = `🍽️ *New Order - Dinu's Tasty*\n\n🔢 Order ID: #${newOrderId}\n👤 Name: ${orderForm.customerName}\n📞 Phone: ${orderForm.phone}\n🛵 Type: ${orderForm.orderType}\n📍 Address: ${orderForm.address}\n\n🍛 Order:\n${cartSummary}\n\n💰 Total: Rs. ${totalPrice}\n\n📝 Notes: ${orderForm.notes || 'None'}`;
             window.open(`https://wa.me/94771234567?text=${encodeURIComponent(msg)}`, '_blank');
-
             setOrderId(newOrderId);
             setSuccess('order');
             setCart([]);
@@ -151,15 +150,22 @@ export default function OrderPage() {
                     Dinu&apos;s <span style={{ color: '#fff', fontStyle: 'italic', fontWeight: 400 }}>Tasty</span>
                 </Link>
                 <div style={{ display: 'flex', gap: 32 }}>
-                    {(['/', '/menu', '/order'] as const).map((href, i) => (
-                        <Link key={href} href={href} style={{ color: href === '/order' ? '#C9A84C' : '#9A9080', textDecoration: 'none', fontSize: 14, fontWeight: 500, letterSpacing: 1, textTransform: 'uppercase' }}>
-                            {['Home', 'Menu', 'Order'][i]}
+                    {(['/', '/menu', '/order', '/track'] as const).map((href, i) => (
+                        <Link key={href} href={href} style={{
+                            color: href === '/order' ? '#C9A84C' : '#9A9080',
+                            textDecoration: 'none', fontSize: 14,
+                            fontWeight: 500, letterSpacing: 1,
+                            textTransform: 'uppercase'
+                        }}>
+                            {['Home', 'Menu', 'Order', 'Track'][i]}
                         </Link>
                     ))}
                 </div>
-                <Link href="/order" style={{ background: '#C9A84C', color: '#0D0D0D', padding: '10px 24px', borderRadius: 4, fontWeight: 700, textDecoration: 'none', fontSize: 14 }}>
-                    Order Now
-                </Link>
+                <Link href="/order" style={{
+                    background: '#C9A84C', color: '#0D0D0D',
+                    padding: '10px 24px', borderRadius: 4,
+                    fontWeight: 700, textDecoration: 'none', fontSize: 14
+                }}>Order Now</Link>
             </nav>
 
             <section style={{ padding: '60px 60px 80px' }}>
@@ -220,13 +226,22 @@ export default function OrderPage() {
                                 ⏰ Ready in 30-45 mins
                             </div>
                         </div>
-                        <button onClick={() => { setSuccess(''); setOrderId(null); }} style={{
-                            background: 'transparent', border: '1px solid rgba(201,168,76,0.4)',
-                            color: '#C9A84C', padding: '12px 28px', borderRadius: 8,
-                            fontSize: 14, cursor: 'pointer', fontFamily: 'DM Sans, sans-serif'
-                        }}>
-                            ← Place Another Order
-                        </button>
+                        <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+                            <Link href="/track" style={{
+                                background: '#C9A84C', color: '#0D0D0D',
+                                padding: '12px 28px', borderRadius: 8,
+                                fontSize: 14, fontWeight: 700, textDecoration: 'none'
+                            }}>
+                                🔍 Track My Order
+                            </Link>
+                            <button onClick={() => { setSuccess(''); setOrderId(null); }} style={{
+                                background: 'transparent', border: '1px solid rgba(201,168,76,0.4)',
+                                color: '#C9A84C', padding: '12px 28px', borderRadius: 8,
+                                fontSize: 14, cursor: 'pointer', fontFamily: 'DM Sans, sans-serif'
+                            }}>
+                                ← Place Another Order
+                            </button>
+                        </div>
                     </div>
                 )}
 

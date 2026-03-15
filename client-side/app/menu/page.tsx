@@ -1,7 +1,6 @@
 'use client';
 import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
-import { getMenuItems, getMenuByCategory } from '@/lib/api';
 
 interface MenuItem {
     id: number;
@@ -26,17 +25,24 @@ export default function MenuPage() {
     ];
 
     const fetchItems = useCallback(async (category: string) => {
-        if (category === 'all') {
-            const res = await getMenuItems();
-            setMenuItems(res.data);
-        } else {
-            const res = await getMenuByCategory(category);
-            setMenuItems(res.data);
+        try {
+            if (category === 'all') {
+                const res = await fetch('http://localhost:8081/api/menu');
+                setMenuItems(await res.json());
+            } else {
+                const res = await fetch(`http://localhost:8081/api/menu/category/${category}`);
+                setMenuItems(await res.json());
+            }
+        } catch {
+            console.error('Failed to load menu');
         }
     }, []);
 
     useEffect(() => {
-        fetchItems(activeCategory);
+        const timer = setTimeout(() => {
+            fetchItems(activeCategory);
+        }, 0);
+        return () => clearTimeout(timer);
     }, [activeCategory, fetchItems]);
 
     return (
@@ -54,9 +60,14 @@ export default function MenuPage() {
                     Dinu&apos;s <span style={{ color: '#fff', fontStyle: 'italic', fontWeight: 400 }}>Tasty</span>
                 </Link>
                 <div style={{ display: 'flex', gap: 32 }}>
-                    {(['/', '/menu', '/order'] as const).map((href, i) => (
-                        <Link key={href} href={href} style={{ color: href === '/menu' ? '#C9A84C' : '#9A9080', textDecoration: 'none', fontSize: 14, fontWeight: 500, letterSpacing: 1, textTransform: 'uppercase' }}>
-                            {['Home', 'Menu', 'Order'][i]}
+                    {(['/', '/menu', '/order', '/track'] as const).map((href, i) => (
+                        <Link key={href} href={href} style={{
+                            color: href === '/menu' ? '#C9A84C' : '#9A9080',
+                            textDecoration: 'none', fontSize: 14,
+                            fontWeight: 500, letterSpacing: 1,
+                            textTransform: 'uppercase'
+                        }}>
+                            {['Home', 'Menu', 'Order', 'Track'][i]}
                         </Link>
                     ))}
                 </div>
@@ -105,7 +116,8 @@ export default function MenuPage() {
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 24 }}>
                         {menuItems.map((item) => (
                             <div key={item.id} style={{
-                                background: '#1A1A1A', border: '1px solid rgba(255,255,255,0.06)',
+                                background: '#1A1A1A',
+                                border: '1px solid rgba(255,255,255,0.06)',
                                 borderRadius: 12, overflow: 'hidden'
                             }}>
                                 <div style={{

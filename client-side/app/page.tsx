@@ -1,7 +1,6 @@
 'use client';
 import Link from 'next/link';
 import { useEffect, useState, useCallback } from 'react';
-import { getMenuItems } from '@/lib/api';
 
 interface MenuItem {
   id: number;
@@ -16,12 +15,20 @@ export default function Home() {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
 
   const fetchMenu = useCallback(async () => {
-    const res = await getMenuItems();
-    setMenuItems(res.data);
+    try {
+      const res = await fetch('http://localhost:8081/api/menu');
+      const data = await res.json();
+      setMenuItems(data);
+    } catch {
+      console.error('Failed to load menu');
+    }
   }, []);
 
   useEffect(() => {
-    fetchMenu();
+    const timer = setTimeout(() => {
+      fetchMenu();
+    }, 0);
+    return () => clearTimeout(timer);
   }, [fetchMenu]);
 
   return (
@@ -35,21 +42,18 @@ export default function Home() {
           background: 'rgba(13,13,13,0.95)',
           borderBottom: '1px solid rgba(201,168,76,0.2)'
         }}>
-        <span style={{
-          fontFamily: 'Playfair Display, serif',
-          fontSize: 28, fontWeight: 900, color: '#C9A84C'
-        }}>
+        <span style={{ fontFamily: 'Playfair Display, serif', fontSize: 28, fontWeight: 900, color: '#C9A84C' }}>
           Dinu&apos;s <span style={{ color: '#fff', fontStyle: 'italic', fontWeight: 400 }}>Tasty</span>
         </span>
           <div style={{ display: 'flex', gap: 32 }}>
-            {(['/', '/menu', '/order'] as const).map((href, i) => (
+            {(['/', '/menu', '/order', '/track'] as const).map((href, i) => (
                 <Link key={href} href={href} style={{
                   color: href === '/' ? '#C9A84C' : '#9A9080',
                   textDecoration: 'none', fontSize: 14,
                   fontWeight: 500, letterSpacing: 1,
                   textTransform: 'uppercase'
                 }}>
-                  {['Home', 'Menu', 'Order'][i]}
+                  {['Home', 'Menu', 'Order', 'Track'][i]}
                 </Link>
             ))}
           </div>

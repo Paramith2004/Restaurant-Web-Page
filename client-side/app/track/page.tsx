@@ -42,9 +42,10 @@ export default function TrackPage() {
         setOrders([]);
 
         try {
+            const res = await fetch('http://localhost:8081/api/orders');
+            const data: Order[] = await res.json();
+
             if (searchType === 'id') {
-                const res = await fetch(`http://localhost:8081/api/orders`);
-                const data: Order[] = await res.json();
                 const found = data.find(o => o.id === parseInt(search));
                 if (found) {
                     setOrder(found);
@@ -52,8 +53,6 @@ export default function TrackPage() {
                     setError('Order not found! Please check your order number.');
                 }
             } else {
-                const res = await fetch(`http://localhost:8081/api/orders`);
-                const data: Order[] = await res.json();
                 const found = data.filter(o => o.phone === search);
                 if (found.length > 0) {
                     setOrders(found);
@@ -77,7 +76,6 @@ export default function TrackPage() {
                 border: `2px solid ${info.color}44`,
                 borderRadius: 16, padding: 32, marginBottom: 24
             }}>
-                {/* Header */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
                     <div>
                         <div style={{ color: '#9A9080', fontSize: 13, marginBottom: 4 }}>Order Number</div>
@@ -96,17 +94,14 @@ export default function TrackPage() {
                     </div>
                 </div>
 
-                {/* Status Description */}
                 <div style={{
                     background: `${info.color}11`,
                     border: `1px solid ${info.color}22`,
-                    borderRadius: 10, padding: '14px 20px',
-                    marginBottom: 24
+                    borderRadius: 10, padding: '14px 20px', marginBottom: 24
                 }}>
                     <p style={{ color: info.color, fontSize: 15, fontWeight: 600 }}>{info.desc}</p>
                 </div>
 
-                {/* Progress Bar - only for non-cancelled */}
                 {o.status !== 'cancelled' && (
                     <div style={{ marginBottom: 24 }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
@@ -120,8 +115,7 @@ export default function TrackPage() {
                                             background: isActive ? stepInfo.color : '#252525',
                                             border: `2px solid ${isActive ? stepInfo.color : '#333'}`,
                                             display: 'flex', alignItems: 'center',
-                                            justifyContent: 'center', margin: '0 auto 8px',
-                                            fontSize: 18
+                                            justifyContent: 'center', margin: '0 auto 8px', fontSize: 18
                                         }}>
                                             {isActive ? stepInfo.icon : '○'}
                                         </div>
@@ -137,13 +131,11 @@ export default function TrackPage() {
                                 height: '100%', borderRadius: 2,
                                 background: info.color,
                                 width: stepIndex === 0 ? '0%' : stepIndex === 1 ? '50%' : '100%',
-                                transition: 'width 0.5s ease'
                             }} />
                         </div>
                     </div>
                 )}
 
-                {/* Order Details */}
                 <div style={{ background: '#252525', borderRadius: 10, padding: 20, marginBottom: 16 }}>
                     <div style={{ color: '#C9A84C', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 12 }}>
                         Order Details
@@ -170,7 +162,6 @@ export default function TrackPage() {
                     )}
                 </div>
 
-                {/* Cancelled message */}
                 {o.status === 'cancelled' && (
                     <div style={{
                         background: 'rgba(239,68,68,0.1)',
@@ -205,35 +196,49 @@ export default function TrackPage() {
                 </Link>
                 <div style={{ display: 'flex', gap: 32 }}>
                     {(['/', '/menu', '/order', '/track'] as const).map((href, i) => (
-                        <Link key={href} href={href} style={{ color: href === '/track' ? '#C9A84C' : '#9A9080', textDecoration: 'none', fontSize: 14, fontWeight: 500, letterSpacing: 1, textTransform: 'uppercase' }}>
+                        <Link key={href} href={href} style={{
+                            color: href === '/track' ? '#C9A84C' : '#9A9080',
+                            textDecoration: 'none', fontSize: 14,
+                            fontWeight: 500, letterSpacing: 1, textTransform: 'uppercase'
+                        }}>
                             {['Home', 'Menu', 'Order', 'Track'][i]}
                         </Link>
                     ))}
                 </div>
-                <Link href="/order" style={{ background: '#C9A84C', color: '#0D0D0D', padding: '10px 24px', borderRadius: 4, fontWeight: 700, textDecoration: 'none', fontSize: 14 }}>
+                <Link href="/order" style={{
+                    background: '#C9A84C', color: '#0D0D0D',
+                    padding: '10px 24px', borderRadius: 4,
+                    fontWeight: 700, textDecoration: 'none', fontSize: 14
+                }}>
                     Order Now
                 </Link>
             </nav>
 
-            <section style={{ padding: '60px 60px 80px', maxWidth: 700, margin: '0 auto' }}>
-
-                {/* HEADER */}
-                <div style={{ textAlign: 'center', marginBottom: 48 }}>
-                    <div style={{ color: '#C9A84C', fontSize: 12, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 16 }}>
-                        ── Order Tracking ──
-                    </div>
-                    <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: 48, fontWeight: 900, color: '#fff', marginBottom: 16 }}>
+            {/* HERO BANNER */}
+            <div style={{ position: 'relative', height: 220, overflow: 'hidden' }}>
+                <img
+                    src="https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=1600&q=80"
+                    alt="Track banner"
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+                <div style={{
+                    position: 'absolute', inset: 0,
+                    background: 'rgba(13,13,13,0.75)',
+                    display: 'flex', flexDirection: 'column',
+                    alignItems: 'center', justifyContent: 'center'
+                }}>
+                    <div style={{ color: '#C9A84C', fontSize: 12, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 12 }}>── Order Tracking ──</div>
+                    <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: 48, fontWeight: 900, color: '#fff' }}>
                         Track Your <em style={{ color: '#C9A84C' }}>Order</em>
                     </h1>
-                    <p style={{ color: '#9A9080', fontSize: 16 }}>
-                        Enter your order number or phone number to check your order status
-                    </p>
                 </div>
+            </div>
+
+            <section style={{ padding: '60px 60px 80px', maxWidth: 700, margin: '0 auto' }}>
 
                 {/* SEARCH */}
                 <div style={{ background: '#1A1A1A', border: '1px solid rgba(201,168,76,0.15)', borderRadius: 16, padding: 32, marginBottom: 40 }}>
 
-                    {/* Search Type Toggle */}
                     <div style={{ display: 'flex', gap: 0, background: '#252525', borderRadius: 8, padding: 4, marginBottom: 24 }}>
                         {(['id', 'phone'] as const).map(t => (
                             <button key={t} onClick={() => { setSearchType(t); setSearch(''); setError(''); setOrder(null); setOrders([]); }} style={{
@@ -249,7 +254,6 @@ export default function TrackPage() {
                         ))}
                     </div>
 
-                    {/* Search Input */}
                     <div style={{ display: 'flex', gap: 12 }}>
                         <input
                             style={{
@@ -276,7 +280,6 @@ export default function TrackPage() {
                         </button>
                     </div>
 
-                    {/* Error */}
                     {error && (
                         <div style={{
                             background: 'rgba(239,68,68,0.1)',
@@ -290,10 +293,8 @@ export default function TrackPage() {
                     )}
                 </div>
 
-                {/* SINGLE ORDER RESULT */}
                 {order && <OrderCard o={order} />}
 
-                {/* MULTIPLE ORDERS BY PHONE */}
                 {orders.length > 0 && (
                     <div>
                         <div style={{ color: '#9A9080', fontSize: 14, marginBottom: 20, textAlign: 'center' }}>
@@ -303,7 +304,6 @@ export default function TrackPage() {
                     </div>
                 )}
 
-                {/* HOW IT WORKS */}
                 {!order && orders.length === 0 && !error && (
                     <div style={{ textAlign: 'center' }}>
                         <div style={{ color: '#9A9080', fontSize: 13, marginBottom: 24 }}>Order Status Guide</div>
@@ -328,7 +328,6 @@ export default function TrackPage() {
                 )}
             </section>
 
-            {/* FOOTER */}
             <footer style={{ background: '#080808', borderTop: '1px solid rgba(201,168,76,0.15)', padding: '40px 60px', textAlign: 'center' }}>
                 <p style={{ color: '#9A9080', fontSize: 14 }}>© 2026 Dinu&apos;s Tasty | Kandy, Sri Lanka 🇱🇰</p>
             </footer>

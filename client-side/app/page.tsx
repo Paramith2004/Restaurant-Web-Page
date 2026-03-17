@@ -69,10 +69,27 @@ export default function Home() {
         {/* HERO */}
         <section style={{
           minHeight: '100vh', display: 'flex', alignItems: 'center',
-          padding: '0 60px',
-          background: 'radial-gradient(ellipse at 70% 50%, rgba(201,168,76,0.08) 0%, transparent 60%), #0D0D0D'
+          padding: '0 60px', position: 'relative', overflow: 'hidden',
+          background: '#0D0D0D'
         }}>
-          <div style={{ maxWidth: 700 }}>
+          {/* Right side image */}
+          <div style={{
+            position: 'absolute', right: 0, top: 0, bottom: 0,
+            width: '55%', zIndex: 0
+          }}>
+            <img
+                src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200&q=80"
+                alt="Restaurant interior"
+                style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.5 }}
+            />
+            <div style={{
+              position: 'absolute', inset: 0,
+              background: 'linear-gradient(to right, #0D0D0D 30%, rgba(13,13,13,0.4) 100%)'
+            }} />
+          </div>
+
+          {/* Left content */}
+          <div style={{ maxWidth: 650, position: 'relative', zIndex: 1 }}>
             <div style={{
               display: 'inline-flex', alignItems: 'center', gap: 10,
               background: 'rgba(201,168,76,0.1)',
@@ -143,7 +160,11 @@ export default function Home() {
         </section>
 
         {/* MENU PREVIEW */}
-        <section style={{ padding: '80px 60px' }}>
+        <section style={{
+          padding: '80px 60px',
+          background: '#0D0D0D',
+          position: 'relative'
+        }}>
           <div style={{ textAlign: 'center', marginBottom: 52 }}>
             <div style={{ color: '#C9A84C', fontSize: 12, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 16 }}>
               ── Our Menu ──
@@ -159,13 +180,24 @@ export default function Home() {
                   border: '1px solid rgba(255,255,255,0.06)',
                   borderRadius: 12, overflow: 'hidden'
                 }}>
-                  <div style={{
-                    height: 160,
-                    background: 'linear-gradient(135deg,#1a1200,#2a1e00)',
-                    display: 'flex', alignItems: 'center',
-                    justifyContent: 'center', fontSize: 64
-                  }}>
-                    {item.emoji || '🍛'}
+                  <div style={{ height: 180, position: 'relative', overflow: 'hidden' }}>
+                    <img
+                        src={getCategoryImage(item.category)}
+                        alt={item.name}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    />
+                    <div style={{
+                      position: 'absolute', inset: 0,
+                      background: 'linear-gradient(to top, rgba(13,13,13,0.8), transparent)'
+                    }} />
+                    <div style={{
+                      position: 'absolute', bottom: 10, right: 10,
+                      fontSize: 28, background: 'rgba(0,0,0,0.6)',
+                      borderRadius: '50%', width: 44, height: 44,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center'
+                    }}>
+                      {item.emoji || '🍛'}
+                    </div>
                   </div>
                   <div style={{ padding: 20 }}>
                     <div style={{ color: '#C9A84C', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8 }}>
@@ -200,27 +232,145 @@ export default function Home() {
           </div>
         </section>
 
+        {/* ABOUT SECTION */}
+        <section style={{
+          padding: '80px 60px',
+          background: '#1A1A1A',
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: 60, alignItems: 'center'
+        }}>
+          <div style={{ position: 'relative', borderRadius: 16, overflow: 'hidden', height: 500 }}>
+            <img
+                src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&q=80"
+                alt="Our restaurant"
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            />
+            <div style={{
+              position: 'absolute', inset: 0,
+              background: 'linear-gradient(to top, rgba(13,13,13,0.6), transparent)'
+            }} />
+          </div>
+          <div>
+            <div style={{ color: '#C9A84C', fontSize: 12, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 16 }}>
+              ── About Us ──
+            </div>
+            <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: 44, fontWeight: 900, color: '#fff', marginBottom: 20 }}>
+              Taste the <em style={{ color: '#C9A84C' }}>Difference</em>
+            </h2>
+            <p style={{ color: '#9A9080', fontSize: 16, lineHeight: 1.8, marginBottom: 32 }}>
+              Dinu&apos;s Tasty has been serving the people of Kandy with exceptional food
+              and warm hospitality every day from 8am to 10pm. Our chefs craft each dish
+              with the finest ingredients and traditional recipes.
+            </p>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+              {[
+                { icon: '🌿', title: 'Fresh Ingredients', desc: 'Locally sourced, fresh every day' },
+                { icon: '👨‍🍳', title: 'Expert Chefs', desc: 'Skilled in authentic recipes' },
+                { icon: '⏰', title: 'Open Every Day', desc: '8am – 10pm, 365 days' },
+                { icon: '🚗', title: 'Fast Delivery', desc: 'Via PickMe & Uber Eats' },
+              ].map(f => (
+                  <div key={f.title} style={{ display: 'flex', gap: 14, alignItems: 'flex-start' }}>
+                    <div style={{
+                      width: 44, height: 44, flexShrink: 0,
+                      background: 'rgba(201,168,76,0.1)',
+                      border: '1px solid rgba(201,168,76,0.2)',
+                      borderRadius: 8,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontSize: 20
+                    }}>
+                      {f.icon}
+                    </div>
+                    <div>
+                      <div style={{ color: '#fff', fontWeight: 600, fontSize: 15, marginBottom: 4 }}>{f.title}</div>
+                      <div style={{ color: '#9A9080', fontSize: 13 }}>{f.desc}</div>
+                    </div>
+                  </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* GALLERY */}
+        <section style={{ padding: '80px 60px', background: '#0D0D0D' }}>
+          <div style={{ textAlign: 'center', marginBottom: 48 }}>
+            <div style={{ color: '#C9A84C', fontSize: 12, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 16 }}>── Gallery ──</div>
+            <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: 44, fontWeight: 900, color: '#fff' }}>
+              Food That <em style={{ color: '#C9A84C' }}>Speaks</em>
+            </h2>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gridTemplateRows: 'repeat(2, 200px)', gap: 16 }}>
+            {[
+              { src: 'https://images.unsplash.com/photo-1512058564366-18510be2db19?w=600&q=80', span: '1 / 3', rowSpan: '1 / 3' },
+              { src: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?w=400&q=80', span: '3 / 4', rowSpan: '1 / 2' },
+              { src: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?w=400&q=80', span: '4 / 5', rowSpan: '1 / 2' },
+              { src: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&q=80', span: '3 / 5', rowSpan: '2 / 3' },
+            ].map((img, i) => (
+                <div key={i} style={{
+                  gridColumn: img.span,
+                  gridRow: img.rowSpan,
+                  borderRadius: 12, overflow: 'hidden',
+                  position: 'relative'
+                }}>
+                  <img src={img.src} alt="Food" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.2)' }} />
+                </div>
+            ))}
+          </div>
+        </section>
+
         {/* FOOTER */}
         <footer style={{
           background: '#080808',
           borderTop: '1px solid rgba(201,168,76,0.15)',
-          padding: '40px 60px', textAlign: 'center'
+          padding: '60px 60px 36px'
         }}>
-          <div style={{
-            fontFamily: 'Playfair Display, serif',
-            fontSize: 28, fontWeight: 900,
-            color: '#C9A84C', marginBottom: 12
-          }}>
-            Dinu&apos;s <span style={{ color: '#fff', fontStyle: 'italic', fontWeight: 400 }}>Tasty</span>
+          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: 48, marginBottom: 48 }}>
+            <div>
+              <div style={{ fontFamily: 'Playfair Display, serif', fontSize: 28, fontWeight: 900, color: '#C9A84C', marginBottom: 16 }}>
+                Dinu&apos;s <span style={{ color: '#fff', fontStyle: 'italic', fontWeight: 400 }}>Tasty</span>
+              </div>
+              <p style={{ color: '#9A9080', fontSize: 14, lineHeight: 1.7, maxWidth: 280 }}>
+                Kandy&apos;s finest restaurant serving authentic Sri Lankan cuisine. Open every day for your dining pleasure.
+              </p>
+            </div>
+            <div>
+              <div style={{ color: '#C9A84C', fontSize: 12, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 20 }}>Quick Links</div>
+              {[['Home', '/'], ['Menu', '/menu'], ['Order', '/order'], ['Track Order', '/track']].map(([label, href]) => (
+                  <div key={label} style={{ marginBottom: 12 }}>
+                    <Link href={href} style={{ color: '#9A9080', textDecoration: 'none', fontSize: 14 }}>{label}</Link>
+                  </div>
+              ))}
+            </div>
+            <div>
+              <div style={{ color: '#C9A84C', fontSize: 12, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 20 }}>Contact</div>
+              {[
+                '📞 0771 234 567',
+                '📍 Kandy, Sri Lanka',
+                '⏰ 8am – 10pm Daily',
+              ].map(item => (
+                  <div key={item} style={{ color: '#9A9080', fontSize: 14, marginBottom: 12 }}>{item}</div>
+              ))}
+            </div>
           </div>
-          <p style={{ color: '#9A9080', fontSize: 14, marginBottom: 8 }}>
-            Kandy, Sri Lanka 🇱🇰 | 0771 234 567 | Every day 8am – 10pm
-          </p>
-          <p style={{ color: '#9A9080', fontSize: 12 }}>
-            © 2026 Dinu&apos;s Tasty. Developed by Paramith Kavisha
-          </p>
+          <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: 24, textAlign: 'center' }}>
+            <p style={{ color: '#9A9080', fontSize: 13 }}>
+              © 2026 Dinu&apos;s Tasty. Developed by Paramith Kavisha
+            </p>
+          </div>
         </footer>
 
       </main>
   );
+}
+
+function getCategoryImage(category: string): string {
+  const images: Record<string, string> = {
+    rice: 'https://images.unsplash.com/photo-1512058564366-18510be2db19?w=500&q=80',
+    noodles: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?w=500&q=80',
+    short: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=500&q=80',
+    drinks: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?w=500&q=80',
+    desserts: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=500&q=80',
+  };
+  return images[category] || 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=500&q=80';
 }

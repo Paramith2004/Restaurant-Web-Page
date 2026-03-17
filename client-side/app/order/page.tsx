@@ -15,6 +15,17 @@ interface CartItem extends MenuItem {
     quantity: number;
 }
 
+function getCategoryImage(category: string): string {
+    const images: Record<string, string> = {
+        rice: 'https://images.unsplash.com/photo-1512058564366-18510be2db19?w=400&q=80',
+        noodles: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?w=400&q=80',
+        short: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&q=80',
+        drinks: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?w=400&q=80',
+        desserts: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=400&q=80',
+    };
+    return images[category] || 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&q=80';
+}
+
 export default function OrderPage() {
     const [tab, setTab] = useState<'order' | 'reservation'>('order');
     const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
@@ -154,8 +165,7 @@ export default function OrderPage() {
                         <Link key={href} href={href} style={{
                             color: href === '/order' ? '#C9A84C' : '#9A9080',
                             textDecoration: 'none', fontSize: 14,
-                            fontWeight: 500, letterSpacing: 1,
-                            textTransform: 'uppercase'
+                            fontWeight: 500, letterSpacing: 1, textTransform: 'uppercase'
                         }}>
                             {['Home', 'Menu', 'Order', 'Track'][i]}
                         </Link>
@@ -168,15 +178,27 @@ export default function OrderPage() {
                 }}>Order Now</Link>
             </nav>
 
-            <section style={{ padding: '60px 60px 80px' }}>
-
-                {/* HEADER */}
-                <div style={{ textAlign: 'center', marginBottom: 48 }}>
-                    <div style={{ color: '#C9A84C', fontSize: 12, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 16 }}>── Order Online ──</div>
+            {/* HERO BANNER */}
+            <div style={{ position: 'relative', height: 220, overflow: 'hidden' }}>
+                <img
+                    src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1600&q=80"
+                    alt="Order banner"
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+                <div style={{
+                    position: 'absolute', inset: 0,
+                    background: 'rgba(13,13,13,0.75)',
+                    display: 'flex', flexDirection: 'column',
+                    alignItems: 'center', justifyContent: 'center'
+                }}>
+                    <div style={{ color: '#C9A84C', fontSize: 12, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 12 }}>── Order Online ──</div>
                     <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: 48, fontWeight: 900, color: '#fff' }}>
                         Order or <em style={{ color: '#C9A84C' }}>Reserve</em>
                     </h1>
                 </div>
+            </div>
+
+            <section style={{ padding: '40px 60px 80px' }}>
 
                 {/* TABS */}
                 <div style={{ display: 'flex', gap: 0, background: '#1A1A1A', borderRadius: 10, padding: 4, maxWidth: 500, margin: '0 auto 40px' }}>
@@ -278,7 +300,7 @@ export default function OrderPage() {
                 {tab === 'order' && !success && (
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: 32, maxWidth: 1100, margin: '0 auto' }}>
 
-                        {/* LEFT - Menu Selection */}
+                        {/* LEFT */}
                         <div>
                             <h3 style={{ color: '#fff', fontFamily: 'Playfair Display, serif', fontSize: 24, marginBottom: 20 }}>
                                 Select Your Items
@@ -291,8 +313,7 @@ export default function OrderPage() {
                                         background: activeCategory === cat.key ? '#C9A84C' : 'transparent',
                                         color: activeCategory === cat.key ? '#0D0D0D' : '#9A9080',
                                         fontWeight: activeCategory === cat.key ? 700 : 500,
-                                        fontSize: 13, cursor: 'pointer',
-                                        fontFamily: 'DM Sans, sans-serif'
+                                        fontSize: 13, cursor: 'pointer', fontFamily: 'DM Sans, sans-serif'
                                     }}>
                                         {cat.emoji} {cat.label}
                                     </button>
@@ -300,7 +321,7 @@ export default function OrderPage() {
                             </div>
                             {filteredItems.length === 0 ? (
                                 <div style={{ textAlign: 'center', color: '#9A9080', padding: 40 }}>
-                                    No items yet — check back soon!
+                                    No items yet!
                                 </div>
                             ) : (
                                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
@@ -312,16 +333,22 @@ export default function OrderPage() {
                                                 border: `1px solid ${cartItem ? 'rgba(201,168,76,0.4)' : 'rgba(255,255,255,0.06)'}`,
                                                 borderRadius: 12, overflow: 'hidden'
                                             }}>
-                                                <div style={{
-                                                    height: 120, background: 'linear-gradient(135deg,#1a1200,#2a1e00)',
-                                                    display: 'flex', alignItems: 'center',
-                                                    justifyContent: 'center', fontSize: 52
-                                                }}>
-                                                    {item.emoji || '🍛'}
+                                                <div style={{ height: 140, position: 'relative', overflow: 'hidden' }}>
+                                                    <img
+                                                        src={getCategoryImage(item.category)}
+                                                        alt={item.name}
+                                                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                                    />
+                                                    <div style={{
+                                                        position: 'absolute', inset: 0,
+                                                        background: 'linear-gradient(to top, rgba(13,13,13,0.8), transparent)'
+                                                    }} />
+                                                    <div style={{ position: 'absolute', bottom: 8, left: 12, color: '#fff', fontWeight: 700, fontSize: 14 }}>
+                                                        {item.emoji} {item.name}
+                                                    </div>
                                                 </div>
-                                                <div style={{ padding: 14 }}>
-                                                    <div style={{ color: '#fff', fontWeight: 700, fontSize: 15, marginBottom: 4 }}>{item.name}</div>
-                                                    <div style={{ color: '#C9A84C', fontWeight: 700, fontSize: 16, marginBottom: 12 }}>Rs. {item.price}</div>
+                                                <div style={{ padding: 12 }}>
+                                                    <div style={{ color: '#C9A84C', fontWeight: 700, fontSize: 16, marginBottom: 10 }}>Rs. {item.price}</div>
                                                     {cartItem ? (
                                                         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                                                             <button onClick={() => removeFromCart(item.id)} style={{
@@ -357,7 +384,7 @@ export default function OrderPage() {
                             )}
                         </div>
 
-                        {/* RIGHT - Cart & Form */}
+                        {/* RIGHT */}
                         <div>
                             <div style={{ background: '#1A1A1A', border: '1px solid rgba(201,168,76,0.15)', borderRadius: 16, padding: 24, marginBottom: 24 }}>
                                 <h3 style={{ color: '#fff', fontFamily: 'Playfair Display, serif', fontSize: 20, marginBottom: 16 }}>

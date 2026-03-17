@@ -11,6 +11,17 @@ interface MenuItem {
     description: string;
 }
 
+function getCategoryImage(category: string): string {
+    const images: Record<string, string> = {
+        rice: 'https://images.unsplash.com/photo-1512058564366-18510be2db19?w=500&q=80',
+        noodles: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?w=500&q=80',
+        short: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=500&q=80',
+        drinks: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?w=500&q=80',
+        desserts: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=500&q=80',
+    };
+    return images[category] || 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=500&q=80';
+}
+
 export default function MenuPage() {
     const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
     const [activeCategory, setActiveCategory] = useState('all');
@@ -64,8 +75,7 @@ export default function MenuPage() {
                         <Link key={href} href={href} style={{
                             color: href === '/menu' ? '#C9A84C' : '#9A9080',
                             textDecoration: 'none', fontSize: 14,
-                            fontWeight: 500, letterSpacing: 1,
-                            textTransform: 'uppercase'
+                            fontWeight: 500, letterSpacing: 1, textTransform: 'uppercase'
                         }}>
                             {['Home', 'Menu', 'Order', 'Track'][i]}
                         </Link>
@@ -78,19 +88,29 @@ export default function MenuPage() {
                 }}>Order Now</Link>
             </nav>
 
-            {/* HEADER */}
-            <section style={{ padding: '60px 60px 40px', textAlign: 'center' }}>
-                <div style={{ color: '#C9A84C', fontSize: 12, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 16 }}>── Our Menu ──</div>
-                <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: 56, fontWeight: 900, color: '#fff', marginBottom: 16 }}>
-                    Crafted With <em style={{ color: '#C9A84C' }}>Passion</em>
-                </h1>
-                <p style={{ color: '#9A9080', fontSize: 16, maxWidth: 500, margin: '0 auto' }}>
-                    Every dish made fresh daily with love and care
-                </p>
-            </section>
+            {/* HERO BANNER */}
+            <div style={{ position: 'relative', height: 300, overflow: 'hidden' }}>
+                <img
+                    src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1600&q=80"
+                    alt="Menu banner"
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+                <div style={{
+                    position: 'absolute', inset: 0,
+                    background: 'rgba(13,13,13,0.75)',
+                    display: 'flex', flexDirection: 'column',
+                    alignItems: 'center', justifyContent: 'center'
+                }}>
+                    <div style={{ color: '#C9A84C', fontSize: 12, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 12 }}>── Our Menu ──</div>
+                    <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: 56, fontWeight: 900, color: '#fff' }}>
+                        Crafted With <em style={{ color: '#C9A84C' }}>Passion</em>
+                    </h1>
+                    <p style={{ color: '#9A9080', fontSize: 16, marginTop: 12 }}>Every dish made fresh daily with love and care</p>
+                </div>
+            </div>
 
             {/* CATEGORY FILTER */}
-            <div style={{ display: 'flex', justifyContent: 'center', gap: 12, padding: '0 60px 40px', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: 12, padding: '32px 60px', flexWrap: 'wrap', background: '#1A1A1A' }}>
                 {categories.map(cat => (
                     <button key={cat.key} onClick={() => setActiveCategory(cat.key)} style={{
                         padding: '10px 24px', borderRadius: 100,
@@ -106,7 +126,7 @@ export default function MenuPage() {
             </div>
 
             {/* MENU GRID */}
-            <section style={{ padding: '0 60px 80px' }}>
+            <section style={{ padding: '40px 60px 80px' }}>
                 {menuItems.length === 0 ? (
                     <div style={{ textAlign: 'center', color: '#9A9080', padding: 80 }}>
                         <div style={{ fontSize: 64, marginBottom: 16 }}>🍽️</div>
@@ -118,17 +138,31 @@ export default function MenuPage() {
                             <div key={item.id} style={{
                                 background: '#1A1A1A',
                                 border: '1px solid rgba(255,255,255,0.06)',
-                                borderRadius: 12, overflow: 'hidden'
+                                borderRadius: 12, overflow: 'hidden',
+                                transition: 'transform 0.3s',
                             }}>
-                                <div style={{
-                                    height: 200, background: 'linear-gradient(135deg,#1a1200,#2a1e00)',
-                                    display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 72
-                                }}>
-                                    {item.emoji || '🍛'}
+                                <div style={{ height: 220, position: 'relative', overflow: 'hidden' }}>
+                                    <img
+                                        src={getCategoryImage(item.category)}
+                                        alt={item.name}
+                                        style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.3s' }}
+                                    />
+                                    <div style={{
+                                        position: 'absolute', inset: 0,
+                                        background: 'linear-gradient(to top, rgba(13,13,13,0.9) 0%, transparent 60%)'
+                                    }} />
+                                    <div style={{
+                                        position: 'absolute', bottom: 12, left: 16, right: 16,
+                                        display: 'flex', justifyContent: 'space-between', alignItems: 'center'
+                                    }}>
+                                        <div style={{ fontFamily: 'Playfair Display, serif', fontSize: 20, fontWeight: 700, color: '#fff' }}>
+                                            {item.name}
+                                        </div>
+                                        <div style={{ fontSize: 28 }}>{item.emoji || '🍛'}</div>
+                                    </div>
                                 </div>
                                 <div style={{ padding: 20 }}>
                                     <div style={{ color: '#C9A84C', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8 }}>{item.category}</div>
-                                    <div style={{ fontFamily: 'Playfair Display, serif', fontSize: 20, fontWeight: 700, color: '#fff', marginBottom: 8 }}>{item.name}</div>
                                     <div style={{ color: '#9A9080', fontSize: 13, lineHeight: 1.5, marginBottom: 16 }}>{item.description}</div>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                         <div style={{ fontFamily: 'Playfair Display, serif', fontSize: 22, fontWeight: 700, color: '#C9A84C' }}>

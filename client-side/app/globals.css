@@ -5,7 +5,6 @@
   --dark: #0D0D0D;
   --dark2: #1A1A1A;
   --dark3: #252525;
-  --cream: #FDF6E3;
 }
 
 * {
@@ -15,11 +14,120 @@
 }
 
 body {
-  background: var(--dark);
+  background: #0D0D0D;
   color: #E8E0D0;
   font-family: 'DM Sans', sans-serif;
+  overflow-x: hidden;
 }
 
 html {
   scroll-behavior: smooth;
+}
+
+/* ── MOBILE NAVBAR ── */
+@media (max-width: 768px) {
+  nav {
+    padding: 16px 20px !important;
+  }
+
+  nav .nav-links {
+    display: none !important;
+  }
+}
+
+/* ── MOBILE HERO ── */
+@media (max-width: 768px) {
+  .hero-section {
+    padding: 100px 24px 60px !important;
+    min-height: auto !important;
+  }
+
+  .hero-image {
+    display: none !important;
+  }
+
+  .hero-title {
+    font-size: 44px !important;
+  }
+}
+
+/* ── MOBILE GRID ── */
+@media (max-width: 768px) {
+  .grid-4 {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .grid-2 {
+    grid-template-columns: 1fr !important;
+  }
+
+  .grid-3 {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ── MOBILE PADDING ── */
+@media (max-width: 768px) {
+  .section-padding {
+    padding: 48px 20px !important;
+  }
+}
+
+/* Desktop nav - show on large screens */
+.desktop-nav {
+  display: flex !important;
+}
+
+/* Mobile nav - hide on large screens */
+.mobile-nav {
+  display: none !important;
+}
+
+/* On mobile */
+@media (max-width: 768px) {
+  .desktop-nav {
+    display: none !important;
+  }
+  .mobile-nav {
+    display: flex !important;
+  }
+}
+
+/* Mobile section padding */
+@media (max-width: 768px) {
+  section {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+
+  /* Info cards - 2 columns on mobile */
+  .info-cards {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* Order page - stack columns */
+  .order-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Menu grid - 1 column on mobile */
+  .menu-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* About section */
+  .about-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Footer */
+  .footer-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Gallery */
+  .gallery-grid {
+    grid-template-columns: 1fr 1fr !important;
+    grid-template-rows: auto !important;
+  }
 }

@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Navbar from '../components/Navbar';
 
 interface MenuItem {
     id: number;
@@ -45,9 +46,9 @@ export default function OrderPage() {
 
     const categories = [
         { key: 'all', label: 'All', emoji: '🍽️' },
-        { key: 'rice', label: 'Rice & Curry', emoji: '🍛' },
+        { key: 'rice', label: 'Rice', emoji: '🍛' },
         { key: 'noodles', label: 'Noodles', emoji: '🍜' },
-        { key: 'short', label: 'Short Eats', emoji: '🥪' },
+        { key: 'short', label: 'Snacks', emoji: '🥪' },
         { key: 'drinks', label: 'Drinks', emoji: '🥤' },
         { key: 'desserts', label: 'Desserts', emoji: '🍮' },
     ];
@@ -66,9 +67,7 @@ export default function OrderPage() {
     const addToCart = (item: MenuItem) => {
         setCart(prev => {
             const existing = prev.find(c => c.id === item.id);
-            if (existing) {
-                return prev.map(c => c.id === item.id ? { ...c, quantity: c.quantity + 1 } : c);
-            }
+            if (existing) return prev.map(c => c.id === item.id ? { ...c, quantity: c.quantity + 1 } : c);
             return [...prev, { ...item, quantity: 1 }];
         });
     };
@@ -76,9 +75,7 @@ export default function OrderPage() {
     const removeFromCart = (id: number) => {
         setCart(prev => {
             const existing = prev.find(c => c.id === id);
-            if (existing && existing.quantity > 1) {
-                return prev.map(c => c.id === id ? { ...c, quantity: c.quantity - 1 } : c);
-            }
+            if (existing && existing.quantity > 1) return prev.map(c => c.id === id ? { ...c, quantity: c.quantity - 1 } : c);
             return prev.filter(c => c.id !== id);
         });
     };
@@ -147,69 +144,43 @@ export default function OrderPage() {
     };
 
     return (
-        <main style={{ background: '#0D0D0D', minHeight: '100vh', paddingTop: 80 }}>
+        <main style={{ background: '#0D0D0D', minHeight: '100vh', paddingTop: 65 }}>
 
-            {/* NAVBAR */}
-            <nav style={{
-                position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000,
-                padding: '20px 60px', display: 'flex',
-                justifyContent: 'space-between', alignItems: 'center',
-                background: 'rgba(13,13,13,0.95)',
-                borderBottom: '1px solid rgba(201,168,76,0.2)'
-            }}>
-                <Link href="/" style={{ fontFamily: 'Playfair Display, serif', fontSize: 28, fontWeight: 900, color: '#C9A84C', textDecoration: 'none' }}>
-                    Dinu&apos;s <span style={{ color: '#fff', fontStyle: 'italic', fontWeight: 400 }}>Tasty</span>
-                </Link>
-                <div style={{ display: 'flex', gap: 32 }}>
-                    {(['/', '/menu', '/order', '/track'] as const).map((href, i) => (
-                        <Link key={href} href={href} style={{
-                            color: href === '/order' ? '#C9A84C' : '#9A9080',
-                            textDecoration: 'none', fontSize: 14,
-                            fontWeight: 500, letterSpacing: 1, textTransform: 'uppercase'
-                        }}>
-                            {['Home', 'Menu', 'Order', 'Track'][i]}
-                        </Link>
-                    ))}
-                </div>
-                <Link href="/order" style={{
-                    background: '#C9A84C', color: '#0D0D0D',
-                    padding: '10px 24px', borderRadius: 4,
-                    fontWeight: 700, textDecoration: 'none', fontSize: 14
-                }}>Order Now</Link>
-            </nav>
+            <Navbar />
 
             {/* HERO BANNER */}
-            <div style={{ position: 'relative', height: 220, overflow: 'hidden' }}>
+            <div style={{ position: 'relative', height: 200, overflow: 'hidden' }}>
                 <img
                     src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1600&q=80"
-                    alt="Order banner"
+                    alt="Order"
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 />
                 <div style={{
                     position: 'absolute', inset: 0,
                     background: 'rgba(13,13,13,0.75)',
                     display: 'flex', flexDirection: 'column',
-                    alignItems: 'center', justifyContent: 'center'
+                    alignItems: 'center', justifyContent: 'center',
+                    textAlign: 'center', padding: '0 24px'
                 }}>
-                    <div style={{ color: '#C9A84C', fontSize: 12, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 12 }}>── Order Online ──</div>
-                    <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: 48, fontWeight: 900, color: '#fff' }}>
+                    <div style={{ color: '#C9A84C', fontSize: 12, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 10 }}>── Order Online ──</div>
+                    <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: 'clamp(28px, 5vw, 48px)', fontWeight: 900, color: '#fff' }}>
                         Order or <em style={{ color: '#C9A84C' }}>Reserve</em>
                     </h1>
                 </div>
             </div>
 
-            <section style={{ padding: '40px 60px 80px' }}>
+            <section style={{ padding: '32px 20px 80px' }}>
 
                 {/* TABS */}
-                <div style={{ display: 'flex', gap: 0, background: '#1A1A1A', borderRadius: 10, padding: 4, maxWidth: 500, margin: '0 auto 40px' }}>
+                <div style={{ display: 'flex', background: '#1A1A1A', borderRadius: 10, padding: 4, maxWidth: 500, margin: '0 auto 32px' }}>
                     {(['order', 'reservation'] as const).map(t => (
                         <button key={t} onClick={() => { setTab(t); setSuccess(''); setOrderId(null); }} style={{
-                            flex: 1, padding: '14px', borderRadius: 8,
+                            flex: 1, padding: '12px', borderRadius: 8,
                             border: 'none', cursor: 'pointer',
                             background: tab === t ? '#C9A84C' : 'transparent',
                             color: tab === t ? '#0D0D0D' : '#9A9080',
                             fontWeight: tab === t ? 700 : 500,
-                            fontSize: 15, fontFamily: 'DM Sans, sans-serif'
+                            fontSize: 14, fontFamily: 'DM Sans, sans-serif'
                         }}>
                             {t === 'order' ? '📦 Place Order' : '🗓️ Reserve Table'}
                         </button>
@@ -220,48 +191,42 @@ export default function OrderPage() {
                 {success === 'order' && orderId && (
                     <div style={{
                         background: '#1A1A1A', border: '2px solid #C9A84C',
-                        borderRadius: 16, padding: 48, textAlign: 'center',
-                        maxWidth: 600, margin: '0 auto 40px'
+                        borderRadius: 16, padding: '36px 24px', textAlign: 'center',
+                        maxWidth: 560, margin: '0 auto 32px'
                     }}>
-                        <div style={{ fontSize: 72, marginBottom: 16 }}>🎉</div>
-                        <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: 36, fontWeight: 900, color: '#C9A84C', marginBottom: 8 }}>
+                        <div style={{ fontSize: 60, marginBottom: 12 }}>🎉</div>
+                        <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: 32, fontWeight: 900, color: '#C9A84C', marginBottom: 8 }}>
                             Order Placed!
                         </h2>
-                        <p style={{ color: '#9A9080', fontSize: 15, marginBottom: 24 }}>
-                            Your order has been received successfully!
-                        </p>
-                        <div style={{ background: '#252525', borderRadius: 12, padding: '20px 32px', marginBottom: 24, display: 'inline-block' }}>
-                            <div style={{ color: '#9A9080', fontSize: 13, marginBottom: 4, letterSpacing: 1 }}>ORDER NUMBER</div>
-                            <div style={{ color: '#C9A84C', fontSize: 48, fontWeight: 900, fontFamily: 'Playfair Display, serif' }}>
-                                #{orderId}
-                            </div>
+                        <div style={{ background: '#252525', borderRadius: 12, padding: '16px 24px', margin: '20px auto', display: 'inline-block' }}>
+                            <div style={{ color: '#9A9080', fontSize: 12, marginBottom: 4 }}>ORDER NUMBER</div>
+                            <div style={{ color: '#C9A84C', fontSize: 44, fontWeight: 900, fontFamily: 'Playfair Display, serif' }}>#{orderId}</div>
                         </div>
-                        <p style={{ color: '#9A9080', fontSize: 14, lineHeight: 1.8, marginBottom: 28 }}>
-                            A WhatsApp message has been sent to the restaurant. 📱<br />
-                            We will confirm your order shortly!
+                        <p style={{ color: '#9A9080', fontSize: 14, lineHeight: 1.8, marginBottom: 24 }}>
+                            WhatsApp message sent to restaurant! 📱<br />We will confirm shortly.
                         </p>
-                        <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 28 }}>
-                            <div style={{ background: 'rgba(201,168,76,0.1)', border: '1px solid rgba(201,168,76,0.3)', borderRadius: 8, padding: '12px 20px', color: '#C9A84C', fontSize: 14 }}>
+                        <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 20 }}>
+                            <div style={{ background: 'rgba(201,168,76,0.1)', border: '1px solid rgba(201,168,76,0.3)', borderRadius: 8, padding: '10px 16px', color: '#C9A84C', fontSize: 13 }}>
                                 📞 0771 234 567
                             </div>
-                            <div style={{ background: 'rgba(201,168,76,0.1)', border: '1px solid rgba(201,168,76,0.3)', borderRadius: 8, padding: '12px 20px', color: '#C9A84C', fontSize: 14 }}>
+                            <div style={{ background: 'rgba(201,168,76,0.1)', border: '1px solid rgba(201,168,76,0.3)', borderRadius: 8, padding: '10px 16px', color: '#C9A84C', fontSize: 13 }}>
                                 ⏰ Ready in 30-45 mins
                             </div>
                         </div>
-                        <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+                        <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
                             <Link href="/track" style={{
                                 background: '#C9A84C', color: '#0D0D0D',
-                                padding: '12px 28px', borderRadius: 8,
+                                padding: '12px 24px', borderRadius: 8,
                                 fontSize: 14, fontWeight: 700, textDecoration: 'none'
                             }}>
-                                🔍 Track My Order
+                                🔍 Track Order
                             </Link>
                             <button onClick={() => { setSuccess(''); setOrderId(null); }} style={{
                                 background: 'transparent', border: '1px solid rgba(201,168,76,0.4)',
-                                color: '#C9A84C', padding: '12px 28px', borderRadius: 8,
+                                color: '#C9A84C', padding: '12px 24px', borderRadius: 8,
                                 fontSize: 14, cursor: 'pointer', fontFamily: 'DM Sans, sans-serif'
                             }}>
-                                ← Place Another Order
+                                ← Order More
                             </button>
                         </div>
                     </div>
@@ -271,141 +236,110 @@ export default function OrderPage() {
                 {success === 'reservation' && (
                     <div style={{
                         background: '#1A1A1A', border: '2px solid #3B82F6',
-                        borderRadius: 16, padding: 48, textAlign: 'center',
-                        maxWidth: 600, margin: '0 auto 40px'
+                        borderRadius: 16, padding: '36px 24px', textAlign: 'center',
+                        maxWidth: 560, margin: '0 auto 32px'
                     }}>
-                        <div style={{ fontSize: 72, marginBottom: 16 }}>🗓️</div>
-                        <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: 36, fontWeight: 900, color: '#3B82F6', marginBottom: 8 }}>
+                        <div style={{ fontSize: 60, marginBottom: 12 }}>🗓️</div>
+                        <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: 32, fontWeight: 900, color: '#3B82F6', marginBottom: 12 }}>
                             Table Reserved!
                         </h2>
-                        <p style={{ color: '#9A9080', fontSize: 15, lineHeight: 1.8, marginBottom: 28 }}>
-                            Your reservation has been received! A WhatsApp message has been sent to the restaurant. 📱<br />
-                            We will confirm your booking shortly!
+                        <p style={{ color: '#9A9080', fontSize: 14, lineHeight: 1.8, marginBottom: 20 }}>
+                            WhatsApp sent! We will confirm shortly. 📱
                         </p>
-                        <div style={{ background: 'rgba(59,130,246,0.1)', border: '1px solid rgba(59,130,246,0.3)', borderRadius: 8, padding: '12px 20px', color: '#3B82F6', fontSize: 14, display: 'inline-block', marginBottom: 28 }}>
-                            📞 For queries: 0771 234 567
+                        <div style={{ background: 'rgba(59,130,246,0.1)', border: '1px solid rgba(59,130,246,0.3)', borderRadius: 8, padding: '12px 20px', color: '#3B82F6', fontSize: 14, display: 'inline-block', marginBottom: 20 }}>
+                            📞 0771 234 567
                         </div>
                         <br />
                         <button onClick={() => setSuccess('')} style={{
                             background: 'transparent', border: '1px solid rgba(59,130,246,0.4)',
-                            color: '#3B82F6', padding: '12px 28px', borderRadius: 8,
+                            color: '#3B82F6', padding: '12px 24px', borderRadius: 8,
                             fontSize: 14, cursor: 'pointer', fontFamily: 'DM Sans, sans-serif'
                         }}>
-                            ← Make Another Reservation
+                            ← Another Reservation
                         </button>
                     </div>
                 )}
 
                 {/* ORDER FORM */}
                 {tab === 'order' && !success && (
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: 32, maxWidth: 1100, margin: '0 auto' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 24, maxWidth: 1100, margin: '0 auto' }}>
 
-                        {/* LEFT */}
+                        {/* LEFT - Menu */}
                         <div>
-                            <h3 style={{ color: '#fff', fontFamily: 'Playfair Display, serif', fontSize: 24, marginBottom: 20 }}>
-                                Select Your Items
+                            <h3 style={{ color: '#fff', fontFamily: 'Playfair Display, serif', fontSize: 22, marginBottom: 16 }}>
+                                Select Items
                             </h3>
-                            <div style={{ display: 'flex', gap: 10, marginBottom: 24, flexWrap: 'wrap' }}>
+                            <div style={{ display: 'flex', gap: 8, marginBottom: 20, flexWrap: 'wrap' }}>
                                 {categories.map(cat => (
                                     <button key={cat.key} onClick={() => setActiveCategory(cat.key)} style={{
-                                        padding: '8px 18px', borderRadius: 100,
+                                        padding: '7px 14px', borderRadius: 100,
                                         border: '1px solid rgba(201,168,76,0.2)',
                                         background: activeCategory === cat.key ? '#C9A84C' : 'transparent',
                                         color: activeCategory === cat.key ? '#0D0D0D' : '#9A9080',
                                         fontWeight: activeCategory === cat.key ? 700 : 500,
-                                        fontSize: 13, cursor: 'pointer', fontFamily: 'DM Sans, sans-serif'
+                                        fontSize: 12, cursor: 'pointer', fontFamily: 'DM Sans, sans-serif'
                                     }}>
                                         {cat.emoji} {cat.label}
                                     </button>
                                 ))}
                             </div>
-                            {filteredItems.length === 0 ? (
-                                <div style={{ textAlign: 'center', color: '#9A9080', padding: 40 }}>
-                                    No items yet!
-                                </div>
-                            ) : (
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-                                    {filteredItems.map(item => {
-                                        const cartItem = cart.find(c => c.id === item.id);
-                                        return (
-                                            <div key={item.id} style={{
-                                                background: '#1A1A1A',
-                                                border: `1px solid ${cartItem ? 'rgba(201,168,76,0.4)' : 'rgba(255,255,255,0.06)'}`,
-                                                borderRadius: 12, overflow: 'hidden'
-                                            }}>
-                                                <div style={{ height: 140, position: 'relative', overflow: 'hidden' }}>
-                                                    <img
-                                                        src={getCategoryImage(item.category)}
-                                                        alt={item.name}
-                                                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                                                    />
-                                                    <div style={{
-                                                        position: 'absolute', inset: 0,
-                                                        background: 'linear-gradient(to top, rgba(13,13,13,0.8), transparent)'
-                                                    }} />
-                                                    <div style={{ position: 'absolute', bottom: 8, left: 12, color: '#fff', fontWeight: 700, fontSize: 14 }}>
-                                                        {item.emoji} {item.name}
-                                                    </div>
-                                                </div>
-                                                <div style={{ padding: 12 }}>
-                                                    <div style={{ color: '#C9A84C', fontWeight: 700, fontSize: 16, marginBottom: 10 }}>Rs. {item.price}</div>
-                                                    {cartItem ? (
-                                                        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                                                            <button onClick={() => removeFromCart(item.id)} style={{
-                                                                width: 32, height: 32, borderRadius: '50%',
-                                                                border: '1px solid rgba(201,168,76,0.4)',
-                                                                background: 'transparent', color: '#C9A84C',
-                                                                fontSize: 18, cursor: 'pointer', fontWeight: 700
-                                                            }}>−</button>
-                                                            <span style={{ color: '#fff', fontWeight: 700, fontSize: 16 }}>{cartItem.quantity}</span>
-                                                            <button onClick={() => addToCart(item)} style={{
-                                                                width: 32, height: 32, borderRadius: '50%',
-                                                                background: '#C9A84C', border: 'none',
-                                                                color: '#0D0D0D', fontSize: 18,
-                                                                cursor: 'pointer', fontWeight: 700
-                                                            }}>+</button>
-                                                        </div>
-                                                    ) : (
-                                                        <button onClick={() => addToCart(item)} style={{
-                                                            width: '100%', background: '#C9A84C',
-                                                            color: '#0D0D0D', border: 'none',
-                                                            padding: '8px', borderRadius: 6,
-                                                            fontWeight: 700, fontSize: 13,
-                                                            cursor: 'pointer', fontFamily: 'DM Sans, sans-serif'
-                                                        }}>
-                                                            + Add
-                                                        </button>
-                                                    )}
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: 12 }}>
+                                {filteredItems.map(item => {
+                                    const cartItem = cart.find(c => c.id === item.id);
+                                    return (
+                                        <div key={item.id} style={{
+                                            background: '#1A1A1A',
+                                            border: `1px solid ${cartItem ? 'rgba(201,168,76,0.4)' : 'rgba(255,255,255,0.06)'}`,
+                                            borderRadius: 10, overflow: 'hidden'
+                                        }}>
+                                            <div style={{ height: 100, position: 'relative', overflow: 'hidden' }}>
+                                                <img
+                                                    src={getCategoryImage(item.category)}
+                                                    alt={item.name}
+                                                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                                />
+                                                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(13,13,13,0.8), transparent)' }} />
+                                                <div style={{ position: 'absolute', bottom: 6, left: 8, color: '#fff', fontWeight: 700, fontSize: 12 }}>
+                                                    {item.emoji}
                                                 </div>
                                             </div>
-                                        );
-                                    })}
-                                </div>
-                            )}
+                                            <div style={{ padding: 10 }}>
+                                                <div style={{ color: '#fff', fontWeight: 600, fontSize: 13, marginBottom: 4 }}>{item.name}</div>
+                                                <div style={{ color: '#C9A84C', fontWeight: 700, fontSize: 14, marginBottom: 8 }}>Rs. {item.price}</div>
+                                                {cartItem ? (
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'center' }}>
+                                                        <button onClick={() => removeFromCart(item.id)} style={{ width: 28, height: 28, borderRadius: '50%', border: '1px solid rgba(201,168,76,0.4)', background: 'transparent', color: '#C9A84C', fontSize: 16, cursor: 'pointer', fontWeight: 700 }}>−</button>
+                                                        <span style={{ color: '#fff', fontWeight: 700 }}>{cartItem.quantity}</span>
+                                                        <button onClick={() => addToCart(item)} style={{ width: 28, height: 28, borderRadius: '50%', background: '#C9A84C', border: 'none', color: '#0D0D0D', fontSize: 16, cursor: 'pointer', fontWeight: 700 }}>+</button>
+                                                    </div>
+                                                ) : (
+                                                    <button onClick={() => addToCart(item)} style={{ width: '100%', background: '#C9A84C', color: '#0D0D0D', border: 'none', padding: '7px', borderRadius: 6, fontWeight: 700, fontSize: 12, cursor: 'pointer', fontFamily: 'DM Sans, sans-serif' }}>
+                                                        + Add
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
                         </div>
 
-                        {/* RIGHT */}
+                        {/* RIGHT - Cart + Form */}
                         <div>
-                            <div style={{ background: '#1A1A1A', border: '1px solid rgba(201,168,76,0.15)', borderRadius: 16, padding: 24, marginBottom: 24 }}>
-                                <h3 style={{ color: '#fff', fontFamily: 'Playfair Display, serif', fontSize: 20, marginBottom: 16 }}>
-                                    🛒 Your Order
-                                </h3>
+                            {/* CART */}
+                            <div style={{ background: '#1A1A1A', border: '1px solid rgba(201,168,76,0.15)', borderRadius: 14, padding: 20, marginBottom: 20 }}>
+                                <h3 style={{ color: '#fff', fontFamily: 'Playfair Display, serif', fontSize: 18, marginBottom: 14 }}>🛒 Your Order</h3>
                                 {cart.length === 0 ? (
-                                    <p style={{ color: '#9A9080', fontSize: 14, textAlign: 'center', padding: '20px 0' }}>
-                                        No items selected yet!
-                                    </p>
+                                    <p style={{ color: '#9A9080', fontSize: 14, textAlign: 'center', padding: '16px 0' }}>No items selected!</p>
                                 ) : (
                                     <>
                                         {cart.map(item => (
-                                            <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                                                <div>
-                                                    <span style={{ color: '#fff', fontSize: 14 }}>{item.emoji} {item.name}</span>
-                                                    <span style={{ color: '#9A9080', fontSize: 12 }}> x{item.quantity}</span>
-                                                </div>
+                                            <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
+                                                <span style={{ color: '#fff', fontSize: 14 }}>{item.emoji} {item.name} <span style={{ color: '#9A9080' }}>x{item.quantity}</span></span>
                                                 <span style={{ color: '#C9A84C', fontWeight: 700 }}>Rs. {item.price * item.quantity}</span>
                                             </div>
                                         ))}
-                                        <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: 12, marginTop: 12, display: 'flex', justifyContent: 'space-between' }}>
+                                        <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: 10, marginTop: 10, display: 'flex', justifyContent: 'space-between' }}>
                                             <span style={{ color: '#fff', fontWeight: 700 }}>Total</span>
                                             <span style={{ color: '#C9A84C', fontWeight: 900, fontSize: 18 }}>Rs. {totalPrice}</span>
                                         </div>
@@ -413,50 +347,34 @@ export default function OrderPage() {
                                 )}
                             </div>
 
-                            <div style={{ background: '#1A1A1A', border: '1px solid rgba(201,168,76,0.15)', borderRadius: 16, padding: 24 }}>
-                                <h3 style={{ color: '#fff', fontFamily: 'Playfair Display, serif', fontSize: 20, marginBottom: 20 }}>
-                                    Your Details
-                                </h3>
-                                <div style={{ marginBottom: 16 }}>
+                            {/* FORM */}
+                            <div style={{ background: '#1A1A1A', border: '1px solid rgba(201,168,76,0.15)', borderRadius: 14, padding: 20 }}>
+                                <h3 style={{ color: '#fff', fontFamily: 'Playfair Display, serif', fontSize: 18, marginBottom: 16 }}>Your Details</h3>
+                                <div style={{ marginBottom: 14 }}>
                                     <label style={labelStyle}>Name *</label>
-                                    <input style={inputStyle} placeholder="Your name"
-                                           value={orderForm.customerName}
-                                           onChange={e => setOrderForm({ ...orderForm, customerName: e.target.value })} />
+                                    <input style={inputStyle} placeholder="Your name" value={orderForm.customerName} onChange={e => setOrderForm({ ...orderForm, customerName: e.target.value })} />
                                 </div>
-                                <div style={{ marginBottom: 16 }}>
+                                <div style={{ marginBottom: 14 }}>
                                     <label style={labelStyle}>Phone *</label>
-                                    <input style={inputStyle} placeholder="077 123 4567"
-                                           value={orderForm.phone}
-                                           onChange={e => setOrderForm({ ...orderForm, phone: e.target.value })} />
+                                    <input style={inputStyle} placeholder="077 123 4567" value={orderForm.phone} onChange={e => setOrderForm({ ...orderForm, phone: e.target.value })} />
                                 </div>
-                                <div style={{ marginBottom: 16 }}>
+                                <div style={{ marginBottom: 14 }}>
                                     <label style={labelStyle}>Order Type</label>
-                                    <select style={inputStyle}
-                                            value={orderForm.orderType}
-                                            onChange={e => setOrderForm({ ...orderForm, orderType: e.target.value })}>
+                                    <select style={inputStyle} value={orderForm.orderType} onChange={e => setOrderForm({ ...orderForm, orderType: e.target.value })}>
                                         <option>Delivery</option>
                                         <option>Dine In</option>
                                         <option>Takeaway</option>
                                     </select>
                                 </div>
-                                <div style={{ marginBottom: 16 }}>
+                                <div style={{ marginBottom: 14 }}>
                                     <label style={labelStyle}>Address</label>
-                                    <input style={inputStyle} placeholder="Your address in Kandy"
-                                           value={orderForm.address}
-                                           onChange={e => setOrderForm({ ...orderForm, address: e.target.value })} />
+                                    <input style={inputStyle} placeholder="Your address" value={orderForm.address} onChange={e => setOrderForm({ ...orderForm, address: e.target.value })} />
                                 </div>
-                                <div style={{ marginBottom: 20 }}>
+                                <div style={{ marginBottom: 18 }}>
                                     <label style={labelStyle}>Notes</label>
-                                    <input style={inputStyle} placeholder="Less spicy, extra rice..."
-                                           value={orderForm.notes}
-                                           onChange={e => setOrderForm({ ...orderForm, notes: e.target.value })} />
+                                    <input style={inputStyle} placeholder="Less spicy..." value={orderForm.notes} onChange={e => setOrderForm({ ...orderForm, notes: e.target.value })} />
                                 </div>
-                                <button onClick={handleOrder} disabled={loading} style={{
-                                    width: '100%', background: '#C9A84C', color: '#0D0D0D',
-                                    border: 'none', padding: 18, borderRadius: 8,
-                                    fontSize: 16, fontWeight: 700, cursor: 'pointer',
-                                    fontFamily: 'DM Sans, sans-serif'
-                                }}>
+                                <button onClick={handleOrder} disabled={loading} style={{ width: '100%', background: '#C9A84C', color: '#0D0D0D', border: 'none', padding: 16, borderRadius: 8, fontSize: 15, fontWeight: 700, cursor: 'pointer', fontFamily: 'DM Sans, sans-serif' }}>
                                     {loading ? 'Placing...' : '📦 Place Order via WhatsApp'}
                                 </button>
                             </div>
@@ -466,56 +384,39 @@ export default function OrderPage() {
 
                 {/* RESERVATION FORM */}
                 {tab === 'reservation' && !success && (
-                    <div style={{ maxWidth: 600, margin: '0 auto' }}>
-                        <div style={{ background: '#1A1A1A', border: '1px solid rgba(201,168,76,0.15)', borderRadius: 16, padding: 40 }}>
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 20 }}>
+                    <div style={{ maxWidth: 560, margin: '0 auto' }}>
+                        <div style={{ background: '#1A1A1A', border: '1px solid rgba(201,168,76,0.15)', borderRadius: 14, padding: 28 }}>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 16 }}>
                                 <div>
                                     <label style={labelStyle}>Full Name *</label>
-                                    <input style={inputStyle} placeholder="Your name"
-                                           value={resForm.name}
-                                           onChange={e => setResForm({ ...resForm, name: e.target.value })} />
+                                    <input style={inputStyle} placeholder="Your name" value={resForm.name} onChange={e => setResForm({ ...resForm, name: e.target.value })} />
                                 </div>
                                 <div>
                                     <label style={labelStyle}>Phone *</label>
-                                    <input style={inputStyle} placeholder="077 XXX XXXX"
-                                           value={resForm.phone}
-                                           onChange={e => setResForm({ ...resForm, phone: e.target.value })} />
+                                    <input style={inputStyle} placeholder="077 XXX XXXX" value={resForm.phone} onChange={e => setResForm({ ...resForm, phone: e.target.value })} />
                                 </div>
                             </div>
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 20 }}>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 16 }}>
                                 <div>
                                     <label style={labelStyle}>Date *</label>
-                                    <input type="date" style={inputStyle}
-                                           value={resForm.date}
-                                           onChange={e => setResForm({ ...resForm, date: e.target.value })} />
+                                    <input type="date" style={inputStyle} value={resForm.date} onChange={e => setResForm({ ...resForm, date: e.target.value })} />
                                 </div>
                                 <div>
                                     <label style={labelStyle}>Time *</label>
-                                    <input type="time" style={inputStyle}
-                                           value={resForm.time}
-                                           onChange={e => setResForm({ ...resForm, time: e.target.value })} />
+                                    <input type="time" style={inputStyle} value={resForm.time} onChange={e => setResForm({ ...resForm, time: e.target.value })} />
                                 </div>
                             </div>
-                            <div style={{ marginBottom: 20 }}>
+                            <div style={{ marginBottom: 16 }}>
                                 <label style={labelStyle}>Guests</label>
-                                <select style={inputStyle}
-                                        value={resForm.guests}
-                                        onChange={e => setResForm({ ...resForm, guests: e.target.value })}>
+                                <select style={inputStyle} value={resForm.guests} onChange={e => setResForm({ ...resForm, guests: e.target.value })}>
                                     {['1', '2', '3', '4', '5', '6+'].map(g => <option key={g}>{g}</option>)}
                                 </select>
                             </div>
-                            <div style={{ marginBottom: 28 }}>
+                            <div style={{ marginBottom: 24 }}>
                                 <label style={labelStyle}>Special Requests</label>
-                                <input style={inputStyle} placeholder="Birthday, anniversary..."
-                                       value={resForm.notes}
-                                       onChange={e => setResForm({ ...resForm, notes: e.target.value })} />
+                                <input style={inputStyle} placeholder="Birthday, anniversary..." value={resForm.notes} onChange={e => setResForm({ ...resForm, notes: e.target.value })} />
                             </div>
-                            <button onClick={handleReservation} disabled={loading} style={{
-                                width: '100%', background: '#C9A84C', color: '#0D0D0D',
-                                border: 'none', padding: 18, borderRadius: 8,
-                                fontSize: 16, fontWeight: 700, cursor: 'pointer',
-                                fontFamily: 'DM Sans, sans-serif'
-                            }}>
+                            <button onClick={handleReservation} disabled={loading} style={{ width: '100%', background: '#C9A84C', color: '#0D0D0D', border: 'none', padding: 16, borderRadius: 8, fontSize: 15, fontWeight: 700, cursor: 'pointer', fontFamily: 'DM Sans, sans-serif' }}>
                                 {loading ? 'Reserving...' : '🗓️ Reserve via WhatsApp'}
                             </button>
                         </div>
@@ -523,8 +424,7 @@ export default function OrderPage() {
                 )}
             </section>
 
-            {/* FOOTER */}
-            <footer style={{ background: '#080808', borderTop: '1px solid rgba(201,168,76,0.15)', padding: '40px 60px', textAlign: 'center' }}>
+            <footer style={{ background: '#080808', borderTop: '1px solid rgba(201,168,76,0.15)', padding: '32px 24px', textAlign: 'center' }}>
                 <p style={{ color: '#9A9080', fontSize: 14 }}>© 2026 Dinu&apos;s Tasty | Kandy, Sri Lanka 🇱🇰</p>
             </footer>
 

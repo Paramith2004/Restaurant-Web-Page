@@ -41,10 +41,7 @@ export default function Navbar() {
                 </Link>
 
                 {/* DESKTOP LINKS */}
-                <div style={{
-                    display: 'flex', gap: 32,
-                    ['@media (max-width: 768px)' as string]: { display: 'none' }
-                }} className="desktop-nav">
+                <div className="desktop-nav" style={{ gap: 32, alignItems: 'center' }}>
                     {links.map(link => (
                         <Link key={link.href} href={link.href} style={{
                             color: pathname === link.href ? '#C9A84C' : '#9A9080',
@@ -68,28 +65,40 @@ export default function Navbar() {
 
                 {/* HAMBURGER */}
                 <button
-                    className="mobile-nav"
+                    className="mobile-menu-btn"
                     onClick={() => setMenuOpen(!menuOpen)}
                     style={{
                         background: 'transparent', border: 'none',
                         cursor: 'pointer', padding: 8,
-                        display: 'flex', flexDirection: 'column', gap: 5
+                        flexDirection: 'column', gap: 5
                     }}
                 >
-                    <span style={{ display: 'block', width: 24, height: 2, background: menuOpen ? '#C9A84C' : '#E8E0D0', transition: 'all 0.3s', transform: menuOpen ? 'rotate(45deg) translateY(7px)' : 'none' }} />
-                    <span style={{ display: 'block', width: 24, height: 2, background: '#E8E0D0', opacity: menuOpen ? 0 : 1, transition: 'all 0.3s' }} />
-                    <span style={{ display: 'block', width: 24, height: 2, background: menuOpen ? '#C9A84C' : '#E8E0D0', transition: 'all 0.3s', transform: menuOpen ? 'rotate(-45deg) translateY(-7px)' : 'none' }} />
+          <span style={{
+              display: 'block', width: 24, height: 2,
+              background: '#C9A84C', transition: 'all 0.3s',
+              transform: menuOpen ? 'rotate(45deg) translateY(7px)' : 'none'
+          }} />
+                    <span style={{
+                        display: 'block', width: 24, height: 2,
+                        background: '#E8E0D0', transition: 'all 0.3s',
+                        opacity: menuOpen ? 0 : 1
+                    }} />
+                    <span style={{
+                        display: 'block', width: 24, height: 2,
+                        background: '#C9A84C', transition: 'all 0.3s',
+                        transform: menuOpen ? 'rotate(-45deg) translateY(-7px)' : 'none'
+                    }} />
                 </button>
             </nav>
 
-            {/* MOBILE MENU */}
+            {/* MOBILE DROPDOWN MENU */}
             {menuOpen && (
                 <div style={{
                     position: 'fixed', top: 65, left: 0, right: 0, zIndex: 999,
                     background: '#1A1A1A',
                     borderBottom: '1px solid rgba(201,168,76,0.2)',
-                    padding: '20px 24px',
-                    display: 'flex', flexDirection: 'column', gap: 4
+                    padding: '16px 24px',
+                    display: 'flex', flexDirection: 'column', gap: 0
                 }}>
                     {links.map(link => (
                         <Link
@@ -98,11 +107,12 @@ export default function Navbar() {
                             onClick={() => setMenuOpen(false)}
                             style={{
                                 color: pathname === link.href ? '#C9A84C' : '#E8E0D0',
-                                textDecoration: 'none', fontSize: 18,
+                                textDecoration: 'none', fontSize: 17,
                                 fontWeight: pathname === link.href ? 700 : 500,
-                                padding: '14px 0',
+                                padding: '16px 0',
                                 borderBottom: '1px solid rgba(255,255,255,0.05)',
-                                letterSpacing: 1, textTransform: 'uppercase'
+                                letterSpacing: 1, textTransform: 'uppercase',
+                                display: 'block'
                             }}
                         >
                             {link.label}
@@ -116,7 +126,7 @@ export default function Navbar() {
                             padding: '16px 24px', borderRadius: 8,
                             fontWeight: 700, textDecoration: 'none',
                             fontSize: 16, textAlign: 'center',
-                            marginTop: 12
+                            marginTop: 16, display: 'block'
                         }}
                     >
                         📦 Order Now
